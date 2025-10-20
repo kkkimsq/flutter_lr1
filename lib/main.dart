@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'ЛР1',
+      title: 'Личный кабинет',
       theme: ThemeData(
         primarySwatch: Colors.pink,
         useMaterial3: true,
@@ -38,7 +38,7 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.pink[50],
       appBar: AppBar(
         title: const Text(
-          'Лабораторная работа 1',
+          'Личный кабинет',
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -52,6 +52,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Первый контейнер с градиентом
             Container(
               width: double.infinity,
               height: 120,
@@ -69,13 +70,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   BoxShadow(
                     color: Colors.pink.shade100,
                     blurRadius: 8,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
               child: const Center(
                 child: Text(
-                  'Контейнер',
+                  'Добро пожаловать!',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 20,
@@ -85,10 +86,11 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
+            // Row с тремя текстовыми элементами
             Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -96,7 +98,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   BoxShadow(
                     color: Colors.pink.shade100,
                     blurRadius: 6,
-                    offset: Offset(0, 2),
+                    offset: const Offset(0, 2),
                   ),
                 ],
               ),
@@ -104,7 +106,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Первый элемент',
+                    'Профиль',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -112,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   Text(
-                    'Второй элемент',
+                    'Настройки',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -120,7 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ),
                   Text(
-                    'Третий элемент',
+                    'Помощь',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -131,8 +133,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
+            // Второй контейнер
             Container(
               width: 280,
               height: 100,
@@ -150,13 +153,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   BoxShadow(
                     color: Colors.pink.shade100,
                     blurRadius: 6,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: const Center(
                 child: Text(
-                  '123',
+                  'Баланс: 1000₽',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -166,11 +169,12 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             
+            // Expanded с CircleAvatar
             Expanded(
               child: Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -178,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     BoxShadow(
                       color: Colors.pink.shade100,
                       blurRadius: 8,
-                      offset: Offset(0, 2),
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -186,14 +190,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Аватар',
+                      'Мой профиль',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
                         color: Colors.pink[700],
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -209,18 +213,37 @@ class _MyHomePageState extends State<MyHomePage> {
                         CircleAvatar(
                           radius: 35,
                           backgroundColor: Colors.pink.shade50,
-                          backgroundImage: NetworkImage(
-                            'https://media.istockphoto.com/id/1443562748/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%BC%D0%B8%D0%BB%D0%B0%D1%8F-%D1%80%D1%8B%D0%B6%D0%B0%D1%8F-%D0%BA%D0%BE%D1%88%D0%BA%D0%B0.jpg',
+                          backgroundImage: const NetworkImage(
+                            'https://media.istockphoto.com/id/1443562748/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%BC%D0%B8%D0%BB%D0%B0%D1%8F-%D1%80%D1%8B%D0%B6%D0%B0%D1%8F-%D0%BA%D0%BE%D1%88%D0%BA%D0%B0.jpg?s=612x612&w=0&k=20&c=k8RwP4usK_LCpQ1bPn3fNDLk3vtfptH7CEcEMZw_K1A=',
+                          ),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 3,
+                              ),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 20),
-                    Text(
-                      'Большой и маленький аватар',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.pink[400],
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _onButtonPressed,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pink[300],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: const Text(
+                        'Изменить аватарку',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
                   ],
@@ -231,11 +254,23 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onButtonPressed,
-        backgroundColor: Colors.pink[300],
-        child: Icon(Icons.favorite, color: Colors.white),
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 30.0), 
+        child: FloatingActionButton(
+          onPressed: _onButtonPressed,
+          backgroundColor: Colors.pink[300],
+          foregroundColor: Colors.white,
+          elevation: 6,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: const Icon(
+            Icons.edit,
+            size: 28,
+          ),
+        ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
