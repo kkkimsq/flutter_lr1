@@ -28,10 +28,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  void _onButtonPressed() {
-    print('Button pressed!');
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -168,100 +164,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),
             ),
-            
-            const SizedBox(height: 20),
-            
-            // Expanded с CircleAvatar
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.pink.shade100,
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Аватар',
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.pink[700],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        CircleAvatar(
-                          radius: 45,
-                          backgroundColor: Colors.pink.shade100,
-                          child: Icon(
-                            Icons.person,
-                            size: 40,
-                            color: Colors.pink[400],
-                          ),
-                        ),
-                        CircleAvatar(
-                          radius: 35,
-                          backgroundColor: Colors.pink.shade50,
-                          backgroundImage: const NetworkImage(
-                            'https://media.istockphoto.com/id/1443562748/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%BC%D0%B8%D0%BB%D0%B0%D1%8F-%D1%80%D1%8B%D0%B6%D0%B0%D1%8F-%D0%BA%D0%BE%D1%88%D0%BA%D0%B0.jpg?s=612x612&w=0&k=20&c=k8RwP4usK_LCpQ1bPn3fNDLk3vtfptH7CEcEMZw_K1A=',
-                          ),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: Colors.white,
-                                width: 3,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      'Большой и маленький аватар',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.pink[400],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),
-      
-  floatingActionButton: Padding(
-  padding: const EdgeInsets.only(bottom: 30.0), 
-  child: FloatingActionButton(
-    onPressed: _onButtonPressed,
-    backgroundColor: Colors.pink[300],
-    foregroundColor: Colors.white,
-    elevation: 6,
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(16),
-    ),
-    child: const Icon(
-      Icons.favorite,
-      size: 28,
-    ),
-  ),
-),
-  floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
 }
