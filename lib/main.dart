@@ -28,6 +28,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  void _onButtonPressed() {
+    print('Button pressed!');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Первый контейнер с градиентом
             Container(
               width: double.infinity,
               height: 120,
@@ -62,6 +65,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink.shade100,
+                    blurRadius: 8,
+                    offset: Offset(0, 4),
+                  ),
+                ],
               ),
               child: const Center(
                 child: Text(
@@ -75,14 +85,20 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             
-            // Row с тремя текстовыми элементами
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink.shade100,
+                    blurRadius: 6,
+                    offset: Offset(0, 2),
+                  ),
+                ],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -90,18 +106,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   Text(
                     'Первый элемент',
                     style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       color: Colors.pink[700],
                     ),
                   ),
                   Text(
                     'Второй элемент',
                     style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       color: Colors.pink[700],
                     ),
                   ),
                   Text(
                     'Третий элемент',
                     style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                       color: Colors.pink[700],
                     ),
                   ),
@@ -109,17 +131,28 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
             
-            // Второй контейнер
             Container(
               width: 280,
               height: 100,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
                 gradient: LinearGradient(
-                  colors: [Colors.pink.shade100, Colors.pink.shade300],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.pink.shade100,
+                    Colors.pink.shade300,
+                  ],
                 ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.pink.shade100,
+                    blurRadius: 6,
+                    offset: Offset(0, 3),
+                  ),
+                ],
               ),
               child: const Center(
                 child: Text(
@@ -127,12 +160,81 @@ class _MyHomePageState extends State<MyHomePage> {
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
+                    fontWeight: FontWeight.bold,
                   ),
+                ),
+              ),
+            ),
+            
+            SizedBox(height: 20),
+            
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.pink.shade100,
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Аватар',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.pink[700],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundColor: Colors.pink.shade100,
+                          child: Icon(
+                            Icons.person,
+                            size: 40,
+                            color: Colors.pink[400],
+                          ),
+                        ),
+                        CircleAvatar(
+                          radius: 35,
+                          backgroundColor: Colors.pink.shade50,
+                          backgroundImage: NetworkImage(
+                            'https://media.istockphoto.com/id/1443562748/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%BC%D0%B8%D0%BB%D0%B0%D1%8F-%D1%80%D1%8B%D0%B6%D0%B0%D1%8F-%D0%BA%D0%BE%D1%88%D0%BA%D0%B0.jpg',
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Большой и маленький аватар',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.pink[400],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ],
         ),
+      ),
+      
+      floatingActionButton: FloatingActionButton(
+        onPressed: _onButtonPressed,
+        backgroundColor: Colors.pink[300],
+        child: Icon(Icons.favorite, color: Colors.white),
       ),
     );
   }
