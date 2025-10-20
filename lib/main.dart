@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Личный кабинет',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
+        primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
       home: const MyHomePage(),
@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.pink[50],
+      backgroundColor: Colors.blue[50],
       appBar: AppBar(
         title: const Text(
           'Личный кабинет',
@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
             color: Colors.white,
           ),
         ),
-        backgroundColor: Colors.pink[300],
+        backgroundColor: Colors.blue[300],
         elevation: 4,
       ),
       
@@ -61,14 +61,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Colors.pink.shade200,
-                    Colors.purple.shade200,
+                    Colors.blue.shade200,
+                    Colors.lightBlue.shade200,
                   ],
                 ),
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink.shade100,
+                    color: Colors.blue.shade100,
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -96,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 borderRadius: BorderRadius.circular(12),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink.shade100,
+                    color: Colors.blue.shade100,
                     blurRadius: 6,
                     offset: const Offset(0, 2),
                   ),
@@ -110,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.pink[700],
+                      color: Colors.blue[700],
                     ),
                   ),
                   Text(
@@ -118,7 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.pink[700],
+                      color: Colors.blue[700],
                     ),
                   ),
                   Text(
@@ -126,7 +126,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.pink[700],
+                      color: Colors.blue[700],
                     ),
                   ),
                 ],
@@ -145,13 +145,13 @@ class _MyHomePageState extends State<MyHomePage> {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    Colors.pink.shade100,
-                    Colors.pink.shade300,
+                    Colors.blue.shade100,
+                    Colors.blue.shade300,
                   ],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.pink.shade100,
+                    color: Colors.blue.shade100,
                     blurRadius: 6,
                     offset: const Offset(0, 3),
                   ),
@@ -180,7 +180,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.pink.shade100,
+                      color: Colors.blue.shade100,
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -194,7 +194,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
-                        color: Colors.pink[700],
+                        color: Colors.blue[700],
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -203,16 +203,16 @@ class _MyHomePageState extends State<MyHomePage> {
                       children: [
                         CircleAvatar(
                           radius: 45,
-                          backgroundColor: Colors.pink.shade100,
+                          backgroundColor: Colors.blue.shade100,
                           child: Icon(
                             Icons.person,
                             size: 40,
-                            color: Colors.pink[400],
+                            color: Colors.blue[400],
                           ),
                         ),
                         CircleAvatar(
                           radius: 35,
-                          backgroundColor: Colors.pink.shade50,
+                          backgroundColor: Colors.blue.shade50,
                           backgroundImage: const NetworkImage(
                             'https://media.istockphoto.com/id/1443562748/ru/%D1%84%D0%BE%D1%82%D0%BE/%D0%BC%D0%B8%D0%BB%D0%B0%D1%8F-%D1%80%D1%8B%D0%B6%D0%B0%D1%8F-%D0%BA%D0%BE%D1%88%D0%BA%D0%B0.jpg?s=612x612&w=0&k=20&c=k8RwP4usK_LCpQ1bPn3fNDLk3vtfptH7CEcEMZw_K1A=',
                           ),
@@ -232,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ElevatedButton(
                       onPressed: _onButtonPressed,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pink[300],
+                        backgroundColor: Colors.blue[300],
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -258,7 +258,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: const EdgeInsets.only(bottom: 30.0), 
         child: FloatingActionButton(
           onPressed: _onButtonPressed,
-          backgroundColor: Colors.pink[300],
+          backgroundColor: Colors.blue[300],
           foregroundColor: Colors.white,
           elevation: 6,
           shape: RoundedRectangleBorder(
