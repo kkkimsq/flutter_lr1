@@ -32,6 +32,11 @@ class _MyHomePageState extends State<MyHomePage> {
     print('Button pressed!');
   }
 
+  Future<String> _loadBalance() async {
+    await Future.delayed(const Duration(seconds: 2)); 
+    return '1000₽';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                  end:   Alignment.bottomRight,
                   colors: [
                     Colors.blue.shade200,
                     Colors.lightBlue.shade200,
@@ -136,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> {
             const SizedBox(height: 20),
             
             // Второй контейнер
-            Container(
+                      Container(
               width: 280,
               height: 100,
               decoration: BoxDecoration(
@@ -157,15 +162,43 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-              child: const Center(
-                child: Text(
-                  'Баланс: 1000₽',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+              child: FutureBuilder<String>(
+                future: _loadBalance(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                      ),
+                    );
+                  }
+                  
+                  // Если произошла ошибка
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Ошибка загрузки',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+                  
+                  // Когда данные успешно загружены
+                  return Center(
+                    child: Text(
+                      'Баланс: ${snapshot.data}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             
@@ -199,7 +232,7 @@ class _MyHomePageState extends State<MyHomePage> {
       Row( 
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
+          Container( 
             width: 100,
             height: 150,
             decoration: BoxDecoration(
