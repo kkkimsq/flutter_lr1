@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Инициализация Supabase
+  await Supabase.initialize(
+    url: 'https://frvexfoezbscdbcvuxas.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZydmV4Zm9lemJzY2RiY3Z1eGFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3NDY4ODgsImV4cCI6MjA3NTMyMjg4OH0.XDr9MFxBMX0P42a4MwjstxtZeh_Caqdyrfpfr7d9ec8',
+  );
+  
   runApp(const MyApp());
 }
 
@@ -28,13 +37,100 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final SupabaseClient _supabase = Supabase.instance.client;
+  final TextEditingController _messageController = TextEditingController();
+  
+  // Загрузка данных из Supabase
+  Future<List<Map<String, dynamic>>> _loadMessages() async {
+    try {
+      final response = await _supabase
+          .from('messages') // Ваша таблица
+          .select()
+          .order('created_at', ascending: false); // Сортировка по дате (новые сверху)
+      
+      return response;
+    } catch (e) {
+      throw Exception('Ошибка загрузки данных: $e');
+    }
+  }
+  
+  // Добавление новой записи
+  Future<void> _addMessage() async {
+    try {
+      if (_messageController.text.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Введите сообщение')),
+        );
+        return;
+      }
+      
+      await _supabase
+          .from('messages') // Ваша таблица
+          .insert({
+            'message': _messageController.text, // Поле message
+            'created_at': DateTime.now().toIso8601String(), // created_at добавится автоматически
+          });
+      
+      // Очистка поля после успешного добавления
+      _messageController.clear();
+      
+      // Обновление состояния
+      setState(() {});
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Сообщение добавлено')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка: $e')),
+      );
+    }
+  }
+
   void _onButtonPressed() {
+    setState(() {});
     print('Button pressed!');
   }
 
   Future<String> _loadBalance() async {
     await Future.delayed(const Duration(seconds: 2)); 
     return '1000₽';
+  }
+
+  // Функция для отображения формы добавления записи
+  void _showAddMessageForm() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Добавить сообщение'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: _messageController,
+              decoration: const InputDecoration(
+                labelText: 'Сообщение',
+                border: OutlineInputBorder(),
+              ),
+              maxLines: 3,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Отмена'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _addMessage();
+            },
+            child: const Text('Добавить'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -51,6 +147,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: Colors.blue[300],
         elevation: 4,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: _showAddMessageForm,
+            tooltip: 'Добавить сообщение',
+          ),
+        ],
       ),
       
       body: SingleChildScrollView(
@@ -64,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
-                  end:   Alignment.bottomRight,
+                  end: Alignment.bottomRight,
                   colors: [
                     Colors.blue.shade200,
                     Colors.lightBlue.shade200,
@@ -140,8 +243,8 @@ class _MyHomePageState extends State<MyHomePage> {
             
             const SizedBox(height: 20),
             
-            // Второй контейнер
-                      Container(
+            // Второй контейнер с FutureBuilder для баланса
+            Container(
               width: 280,
               height: 100,
               decoration: BoxDecoration(
@@ -165,6 +268,7 @@ class _MyHomePageState extends State<MyHomePage> {
               child: FutureBuilder<String>(
                 future: _loadBalance(),
                 builder: (context, snapshot) {
+                  // Показываем индикатор загрузки
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(
                       child: CircularProgressIndicator(
@@ -176,13 +280,24 @@ class _MyHomePageState extends State<MyHomePage> {
                   // Если произошла ошибка
                   if (snapshot.hasError) {
                     return Center(
-                      child: Text(
-                        'Ошибка загрузки',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.error_outline,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Ошибка загрузки',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     );
                   }
@@ -204,61 +319,192 @@ class _MyHomePageState extends State<MyHomePage> {
             
             const SizedBox(height: 20),
             
-            //Секция с картинками
-           Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-      BoxShadow(
-        color: Colors.blue.shade100,
-        blurRadius: 8,
-        offset: const Offset(0, 2),
-      ),
-    ],
-  ),
-  child: Column(
-    children: [
-      Text(
-        'Ваши игры:',
-        style: TextStyle(
-          fontSize: 22,
-          fontWeight: FontWeight.bold,
-          color: Colors.blue[700],
-        ),
-      ),
-      const SizedBox(height: 16),
-      Row( 
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Container( 
-            width: 100,
-            height: 150,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: const DecorationImage(
-                image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVTIXFG8H2WuK-41ws1aDq7LQ6zyARt3yjKg&s'),
-                fit: BoxFit.cover,
+            // FutureBuilder для отображения данных из Supabase
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.shade100,
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'Сообщения из базы данных:',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[700],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  
+                  FutureBuilder<List<Map<String, dynamic>>>(
+                    future: _loadMessages(),
+                    builder: (context, snapshot) {
+                      // Проверка состояния подключения
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+                      
+                      // Проверка наличия ошибки
+                      if (snapshot.hasError) {
+                        return Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            children: [
+                              const Icon(
+                                Icons.error_outline,
+                                color: Colors.red,
+                                size: 50,
+                              ),
+                              const SizedBox(height: 10),
+                              Text(
+                                'Ошибка подключения: ${snapshot.error}',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 16,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 10),
+                              ElevatedButton(
+                                onPressed: () => setState(() {}),
+                                child: const Text('Повторить'),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                      
+                      // Проверка наличия данных
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Padding(
+                          padding: EdgeInsets.all(20.0),
+                          child: Text(
+                            'Нет сообщений для отображения',
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        );
+                      }
+                      
+                      // Отображение данных
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          final message = snapshot.data![index];
+                          return Card(
+                            margin: const EdgeInsets.symmetric(vertical: 5),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor: Colors.blue[100],
+                                child: Text(
+                                  '${index + 1}',
+                                  style: TextStyle(
+                                    color: Colors.blue[700],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              title: Text(
+                                message['message']?.toString() ?? 'Нет сообщения',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              subtitle: Text(
+                                message['created_at'] != null 
+                                    ? _formatDate(message['created_at'].toString())
+                                    : 'Нет даты',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
-          ),
-          Container(
-            width: 100,
-            height: 150,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
-              image: const DecorationImage(
-                image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwV5kdZhn6WIMld7Lz9Zv6cp5fLS2oG95UiQ&s'),
-                fit: BoxFit.cover,
+            
+            const SizedBox(height: 20),
+            
+            // Секция с картинками
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.blue.shade100,
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'Ваши игры:',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue[700],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row( 
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container( 
+                        width: 100,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: const DecorationImage(
+                            image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVTIXFG8H2WuK-41ws1aDq7LQ6zyARt3yjKg&s'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Container(
+                        width: 100,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          image: const DecorationImage(
+                            image: NetworkImage('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQwV5kdZhn6WIMld7Lz9Zv6cp5fLS2oG95UiQ&s'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-    ],
-  ),
-),
+            
             const SizedBox(height: 20),
             
             // Секция профиля с кнопкой
@@ -293,11 +539,6 @@ class _MyHomePageState extends State<MyHomePage> {
                       CircleAvatar(
                         radius: 45,
                         backgroundColor: Colors.blue.shade100,
-                        child: Icon(
-                          Icons.person,
-                          size: 40,
-                          color: Colors.blue[400],
-                        ),
                       ),
                       CircleAvatar(
                         radius: 35,
@@ -342,6 +583,24 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
+      
+      // Кнопка добавления в нижней части экрана
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddMessageForm,
+        backgroundColor: Colors.blue[300],
+        foregroundColor: Colors.white,
+        child: const Icon(Icons.add),
+      ),
     );
+  }
+  
+  // Вспомогательная функция для форматирования даты
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      return '${date.day}.${date.month}.${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return dateString;
+    }
   }
 }
