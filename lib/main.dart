@@ -24,8 +24,476 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: const MyHomePage(),
+      home: const AuthScreen(), // Начинаем с экрана авторизации
     );
+  }
+}
+
+// Экран авторизации
+class AuthScreen extends StatefulWidget {
+  const AuthScreen({super.key});
+
+  @override
+  State<AuthScreen> createState() => _AuthScreenState();
+}
+
+class _AuthScreenState extends State<AuthScreen> {
+  final _supabase = Supabase.instance.client;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _signIn() async {
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final response = await _supabase.auth.signInWithPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (response.user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MyHomePage()),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка авторизации: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _navigateToRegister() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const RegisterScreen()),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue[50],
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 60),
+              
+              // Заголовок
+              Text(
+                'Вход в аккаунт',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[700],
+                ),
+              ),
+              
+              const SizedBox(height: 8),
+              
+              Text(
+                'Введите ваши данные для входа',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // Поле email
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.shade100,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.email),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Поле пароля
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.shade100,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Пароль',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.lock),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              
+              const SizedBox(height: 30),
+              
+              // Кнопка входа
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _signIn,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[300],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Войти',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Ссылка на регистрацию
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Нет аккаунта?',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: _navigateToRegister,
+                    child: Text(
+                      'Зарегистрироваться',
+                      style: TextStyle(
+                        color: Colors.blue[400],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+}
+
+// Экран регистрации
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
+  @override
+  State<RegisterScreen> createState() => _RegisterScreenState();
+}
+
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _supabase = Supabase.instance.client;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
+  bool _isLoading = false;
+
+  Future<void> _signUp() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Пароли не совпадают')),
+      );
+      return;
+    }
+
+    if (_passwordController.text.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Пароль должен содержать минимум 6 символов')),
+      );
+      return;
+    }
+
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final response = await _supabase.auth.signUp(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+
+      if (response.user != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Регистрация успешна! Теперь войдите в аккаунт.')),
+        );
+        
+        Navigator.pop(context);
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка регистрации: $e')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  void _navigateToLogin() {
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue[50],
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: _navigateToLogin,
+        ),
+        title: const Text('Регистрация'),
+        backgroundColor: Colors.blue[300],
+        foregroundColor: Colors.white,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            children: [
+              const SizedBox(height: 40),
+              
+              // Заголовок
+              Text(
+                'Создать аккаунт',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue[700],
+                ),
+              ),
+              
+              const SizedBox(height: 8),
+              
+              Text(
+                'Заполните данные для регистрации',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+              
+              const SizedBox(height: 40),
+              
+              // Поле email
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.shade100,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _emailController,
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.email),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Поле пароля
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.shade100,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Пароль',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.lock),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Подтверждение пароля
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.blue.shade100,
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: TextField(
+                  controller: _confirmPasswordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Подтвердите пароль',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.lock_outline),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  obscureText: true,
+                ),
+              ),
+              
+              const SizedBox(height: 30),
+              
+              // Кнопка регистрации
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _signUp,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue[300],
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    elevation: 4,
+                  ),
+                  child: _isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Зарегистрироваться',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Ссылка на вход
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Уже есть аккаунт?',
+                    style: TextStyle(
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: _navigateToLogin,
+                    child: Text(
+                      'Войти',
+                      style: TextStyle(
+                        color: Colors.blue[400],
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
+    super.dispose();
   }
 }
 
@@ -40,6 +508,21 @@ class _MyHomePageState extends State<MyHomePage> {
   final SupabaseClient _supabase = Supabase.instance.client;
   final TextEditingController _messageController = TextEditingController();
   
+  // Функция выхода
+  Future<void> _signOut() async {
+    try {
+      await _supabase.auth.signOut();
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const AuthScreen()),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Ошибка выхода: $e')),
+      );
+    }
+  }
+
   // Загрузка данных из Supabase
   Future<List<Map<String, dynamic>>> _loadMessages() async {
     try {
@@ -152,6 +635,11 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.add),
             onPressed: _showAddMessageForm,
             tooltip: 'Добавить сообщение',
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: _signOut,
+            tooltip: 'Выйти',
           ),
         ],
       ),
@@ -544,7 +1032,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         radius: 35,
                         backgroundColor: Colors.blue.shade50,
                         backgroundImage: const NetworkImage(
-                          'data:image/jpeg;base64,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',
+                          '',
                         ),
                         child: Container(
                           decoration: BoxDecoration(
